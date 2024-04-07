@@ -1,0 +1,158 @@
+class ATM:
+    def __init__(self):
+        self.accounts = {}  # Dictionary to store account information
+        self.transactions = {}  # Dictionary to store transaction history
+
+    def create_account(self, account_number, pin, balance=0):
+        if account_number not in self.accounts:
+            self.accounts[account_number] = {"pin": pin, "balance": balance}
+            self.transactions[account_number] = []
+            print("Account created successfully!")
+        else:
+            print("Account number already exists.")
+
+    def login(self, account_number, pin):
+        if account_number in self.accounts:
+            if self.accounts[account_number]["pin"] == pin:
+                print("Login successful!")
+                return True
+            else:
+                print("Incorrect PIN.")
+        else:
+            print("Account number does not exist.")
+        return False
+
+    def deposit(self, account_number, amount):
+        if account_number in self.accounts:
+            self.accounts[account_number]["balance"] += amount
+            self.transactions[account_number].append(f"Deposited ${amount}")
+            print(f"${amount} deposited successfully.")
+        else:
+            print("Account number does not exist.")
+
+    def withdraw(self, account_number, amount):
+        if account_number in self.accounts:
+            if self.accounts[account_number]["balance"] >= amount:
+                self.accounts[account_number]["balance"] -= amount
+                self.transactions[account_number].append(f"Withdrew ${amount}")
+                print(f"${amount} withdrawn successfully.")
+            else:
+                print("Insufficient balance.")
+        else:
+            print("Account number does not exist.")
+
+    def transfer(self, from_account, to_account, amount):
+        if from_account in self.accounts and to_account in self.accounts:
+            if self.accounts[from_account]["balance"] >= amount:
+                self.accounts[from_account]["balance"] -= amount
+                self.accounts[to_account]["balance"] += amount
+                self.transactions[from_account].append(f"Transferred ${amount} to {to_account}")
+                self.transactions[to_account].append(f"Received ${amount} from {from_account}")
+                print(f"${amount} transferred successfully to {to_account}.")
+            else:
+                print("Insufficient balance.")
+        else:
+            print("Account number does not exist.")
+
+    def show_balance(self, account_number):
+        if account_number in self.accounts:
+            balance = self.accounts[account_number]["balance"]
+            print(f"Current balance: ${balance}")
+        else:
+            print("Account number does not exist.")
+
+    def show_transaction_history(self, account_number):
+        if account_number in self.transactions:
+            print("Transaction History:")
+            for transaction in self.transactions[account_number]:
+                print(transaction)
+        else:
+            print("Account number does not exist.")
+
+
+def main():
+    atm = ATM()
+
+    while True:
+        print("\nWelcome to the ATM")
+        print("1. Create Account")
+        print("2. Login")
+        print("3. Deposit")
+        print("4. Withdraw")
+        print("5. Transfer")
+        print("6. Show Balance")
+        print("7. Show Transaction History")
+        print("8. Quit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            account_number = input("Enter account number: ")
+            pin = input("Enter PIN: ")
+            atm.create_account(account_number, pin)
+
+        elif choice == "2":
+            account_number = input("Enter account number: ")
+            pin = input("Enter PIN: ")
+            if atm.login(account_number, pin):
+                while True:
+                    print("\n1. Deposit")
+                    print("2. Withdraw")
+                    print("3. Transfer")
+                    print("4. Show Balance")
+                    print("5. Show Transaction History")
+                    print("6. Logout")
+
+                    user_choice = input("Enter your choice: ")
+
+                    if user_choice == "1":
+                        amount = float(input("Enter amount to deposit: "))
+                        atm.deposit(account_number, amount)
+
+                    elif user_choice == "2":
+                        amount = float(input("Enter amount to withdraw: "))
+                        atm.withdraw(account_number, amount)
+
+                    elif user_choice == "3":
+                        to_account = input("Enter recipient account number: ")
+                        amount = float(input("Enter amount to transfer: "))
+                        atm.transfer(account_number, to_account, amount)
+
+                    elif user_choice == "4":
+                        atm.show_balance(account_number)
+
+                    elif user_choice == "5":
+                        atm.show_transaction_history(account_number)
+
+                    elif user_choice == "6":
+                        print("Logged out.")
+                        break
+
+                    else:
+                        print("Invalid choice.")
+
+        elif choice == "3":
+            print("Deposit functionality is only available after login.")
+
+        elif choice == "4":
+            print("Withdraw functionality is only available after login.")
+
+        elif choice == "5":
+            print("Transfer functionality is only available after login.")
+
+        elif choice == "6":
+            print("Show balance functionality is only available after login.")
+
+        elif choice == "7":
+            print("Show transaction history functionality is only available after login.")
+
+        elif choice == "8":
+            print("Thank you for using the ATM.")
+            break
+
+        else:
+            print("Invalid choice.")
+
+
+if __name__ == "__main__":
+    main()
